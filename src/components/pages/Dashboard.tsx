@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ChatInterface } from '@/components/ui/chat-interface'
-import { DatabaseService } from '@/lib/database'
+import { db } from '@/lib/database'
 import type { Agent } from '@/lib/blink'
 import { 
   Activity, 
@@ -41,7 +41,7 @@ export function Dashboard({ user }: DashboardProps) {
   const loadDashboardData = useCallback(async () => {
     if (!user?.id) return
     try {
-      const agents = await DatabaseService.getAgents(user.id)
+      const agents = await db.getAgents()
       setRealAgents(agents)
     } catch (error) {
       console.error('Failed to load dashboard data:', error)

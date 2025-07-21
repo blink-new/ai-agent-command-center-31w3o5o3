@@ -7,7 +7,7 @@ import { ScrollArea } from './scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 import { Send, Bot, User, Loader2 } from 'lucide-react'
 import { AIService } from '@/lib/ai-services'
-import { DatabaseService } from '@/lib/database'
+import { db } from '@/lib/database'
 import type { ChatMessage } from '@/lib/blink'
 
 interface ChatInterfaceProps {
@@ -49,7 +49,7 @@ export function ChatInterface({ user, className }: ChatInterfaceProps) {
   const loadChatHistory = useCallback(async () => {
     if (!user?.id) return
     try {
-      const history = await DatabaseService.getChatMessages(user.id, 50)
+      const history = await db.getChatMessages(user.id, 50)
       setMessages(history)
     } catch (error) {
       console.error('Failed to load chat history:', error)
@@ -76,7 +76,7 @@ export function ChatInterface({ user, className }: ChatInterfaceProps) {
 
     try {
       // Save user message to database
-      await DatabaseService.createChatMessage(userMessage)
+      await db.createChatMessage(userMessage)
 
       // Get AI response
       const response = await AIService.callAgent(selectedAgent, userMessage.content)
@@ -94,7 +94,7 @@ export function ChatInterface({ user, className }: ChatInterfaceProps) {
       setMessages(prev => [...prev, assistantMessage])
 
       // Save assistant message to database
-      await DatabaseService.createChatMessage(assistantMessage)
+      await db.createChatMessage(assistantMessage)
 
     } catch (error) {
       console.error('Failed to send message:', error)
