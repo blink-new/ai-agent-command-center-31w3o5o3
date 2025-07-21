@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DeploymentPipeline } from '@/components/ui/deployment-pipeline'
 import { 
   Rocket, 
   Globe, 
@@ -142,28 +144,36 @@ export function DeploymentCenter() {
         </Button>
       </div>
 
-      {/* Environment Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {environments.map((env, index) => {
-          const Icon = env.icon
-          return (
-            <Card key={index} className="glass border-white/10 hover:border-primary/30 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${env.color} flex items-center justify-center`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <Badge variant="outline" className={`${getEnvironmentStatusColor(env.status)} border-current`}>
-                    {env.status}
-                  </Badge>
-                </div>
-                <h3 className="font-semibold text-white mb-1">{env.name}</h3>
-                <p className="text-sm text-muted-foreground">{env.deployments} deployments</p>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+      <Tabs defaultValue="deployments" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 glass">
+          <TabsTrigger value="deployments">Active Deployments</TabsTrigger>
+          <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
+          <TabsTrigger value="environments">Environments</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="deployments" className="space-y-6 mt-6">
+          {/* Environment Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {environments.map((env, index) => {
+              const Icon = env.icon
+              return (
+                <Card key={index} className="glass border-white/10 hover:border-primary/30 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${env.color} flex items-center justify-center`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <Badge variant="outline" className={`${getEnvironmentStatusColor(env.status)} border-current`}>
+                        {env.status}
+                      </Badge>
+                    </div>
+                    <h3 className="font-semibold text-white mb-1">{env.name}</h3>
+                    <p className="text-sm text-muted-foreground">{env.deployments} deployments</p>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
 
       {/* Active Deployments */}
       <div className="space-y-4">
@@ -304,41 +314,6 @@ export function DeploymentCenter() {
         </div>
       </div>
 
-      {/* Deployment Pipeline */}
-      <Card className="glass border-white/10">
-        <CardHeader>
-          <CardTitle className="text-primary">Deployment Pipeline</CardTitle>
-          <CardDescription>Automated CI/CD workflow status</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <GitBranch className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">main branch</span>
-              </div>
-              <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                  <span className="text-sm">Build</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                  <span className="text-sm">Test</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
-                  <span className="text-sm">Deploy</span>
-                </div>
-              </div>
-            </div>
-            <Badge variant="outline" className="border-blue-400/30 text-blue-400">
-              In Progress
-            </Badge>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Quick Actions */}
       <Card className="glass border-white/10">
         <CardHeader>
@@ -366,6 +341,59 @@ export function DeploymentCenter() {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="pipeline" className="space-y-6 mt-6">
+          <DeploymentPipeline 
+            onDeploy={(pipeline) => {
+              console.log('Pipeline deployed:', pipeline)
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="environments" className="space-y-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {environments.map((env, index) => {
+              const Icon = env.icon
+              return (
+                <Card key={index} className="glass border-white/10">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${env.color} flex items-center justify-center`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-primary">{env.name}</CardTitle>
+                        <CardDescription>{env.deployments} active deployments</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Status</span>
+                        <Badge variant="outline" className={`${getEnvironmentStatusColor(env.status)} border-current`}>
+                          {env.status}
+                        </Badge>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="flex-1">
+                          <Settings className="w-3 h-3 mr-1" />
+                          Configure
+                        </Button>
+                        <Button size="sm" variant="outline" className="flex-1">
+                          <Monitor className="w-3 h-3 mr-1" />
+                          Monitor
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

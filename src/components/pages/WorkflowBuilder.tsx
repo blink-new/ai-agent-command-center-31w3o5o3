@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { WorkflowCanvas } from '@/components/ui/workflow-canvas'
 import { 
   Plus, 
   Play, 
@@ -199,79 +200,15 @@ export function WorkflowBuilder() {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="h-full">
+            <CardContent className="h-full p-0">
               {selectedWorkflow ? (
-                <div className="relative h-full bg-gradient-to-br from-black/20 to-black/40 rounded-lg border border-white/10 p-6">
-                  {/* Sample Workflow Visualization */}
-                  <div className="flex items-center justify-center h-full">
-                    <div className="flex items-center gap-8">
-                      {/* Input Node */}
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                          <FileText className="w-8 h-8 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">Input Data</span>
-                      </div>
-
-                      <ArrowRight className="w-6 h-6 text-primary" />
-
-                      {/* Agent Node */}
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg animate-pulse-glow">
-                          <Bot className="w-8 h-8 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">Claude 3.5</span>
-                      </div>
-
-                      <ArrowRight className="w-6 h-6 text-primary" />
-
-                      {/* Process Node */}
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                          <Zap className="w-8 h-8 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">Process</span>
-                      </div>
-
-                      <ArrowRight className="w-6 h-6 text-primary" />
-
-                      {/* Output Node */}
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
-                          <Globe className="w-8 h-8 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">Output</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Workflow Properties Panel */}
-                  <div className="absolute top-4 right-4 w-64">
-                    <Card className="glass border-white/20">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm text-primary">Node Properties</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div>
-                          <label className="text-xs text-muted-foreground">Node Type</label>
-                          <Input value="AI Agent" className="mt-1 h-8 text-sm glass border-white/20" />
-                        </div>
-                        <div>
-                          <label className="text-xs text-muted-foreground">Model</label>
-                          <Input value="Claude 3.5 Sonnet" className="mt-1 h-8 text-sm glass border-white/20" />
-                        </div>
-                        <div>
-                          <label className="text-xs text-muted-foreground">Temperature</label>
-                          <Input value="0.7" className="mt-1 h-8 text-sm glass border-white/20" />
-                        </div>
-                        <Button size="sm" className="w-full">
-                          <Settings className="w-3 h-3 mr-1" />
-                          Configure
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
+                <WorkflowCanvas 
+                  workflowId={selectedWorkflow}
+                  onSave={(nodes, connections) => {
+                    console.log('Saving workflow:', { nodes, connections })
+                    // Handle workflow save
+                  }}
+                />
               ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   <div className="text-center">

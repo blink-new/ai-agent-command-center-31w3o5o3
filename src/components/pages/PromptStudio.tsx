@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { PromptTester } from '@/components/ui/prompt-tester'
 import { 
   Save, 
   Play, 
@@ -24,6 +25,7 @@ import {
 export function PromptStudio() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [promptText, setPromptText] = useState('')
+  const [variables, setVariables] = useState<Record<string, string>>({})
 
   const promptTemplates = [
     {
@@ -252,10 +254,11 @@ Create an engaging narrative that captures the reader's attention from the first
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="editor" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 glass">
+                <TabsList className="grid w-full grid-cols-4 glass">
                   <TabsTrigger value="editor">Editor</TabsTrigger>
                   <TabsTrigger value="variables">Variables</TabsTrigger>
                   <TabsTrigger value="settings">Settings</TabsTrigger>
+                  <TabsTrigger value="testing">Testing</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="editor" className="space-y-4 mt-4">
@@ -283,6 +286,8 @@ Create an engaging narrative that captures the reader's attention from the first
                       </label>
                       <Input
                         placeholder={`Enter ${variable.replace('_', ' ')}`}
+                        value={variables[variable] || ''}
+                        onChange={(e) => setVariables(prev => ({ ...prev, [variable]: e.target.value }))}
                         className="glass border-white/20"
                       />
                     </div>
@@ -315,6 +320,16 @@ Create an engaging narrative that captures the reader's attention from the first
                       <Input value="0.9" className="glass border-white/20" />
                     </div>
                   </div>
+                </TabsContent>
+                
+                <TabsContent value="testing" className="space-y-4 mt-4">
+                  <PromptTester 
+                    prompt={promptText}
+                    variables={variables}
+                    onResultsChange={(results) => {
+                      console.log('Test results updated:', results)
+                    }}
+                  />
                 </TabsContent>
               </Tabs>
             </CardContent>

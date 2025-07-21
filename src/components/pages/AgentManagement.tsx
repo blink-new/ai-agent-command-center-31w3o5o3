@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { MCPConfigDialog } from '@/components/ui/mcp-config-dialog'
 import { 
   Search, 
   Plus, 
@@ -20,6 +21,8 @@ import {
 
 export function AgentManagement() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [mcpDialogOpen, setMcpDialogOpen] = useState(false)
+  const [selectedAgent, setSelectedAgent] = useState<{ name: string; provider: string } | null>(null)
 
   const agents = [
     {
@@ -242,7 +245,14 @@ export function AgentManagement() {
                     </>
                   )}
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedAgent({ name: agent.name, provider: agent.provider })
+                    setMcpDialogOpen(true)
+                  }}
+                >
                   <Settings className="w-3 h-3 mr-1" />
                   Configure
                 </Button>
@@ -275,6 +285,16 @@ export function AgentManagement() {
           </div>
         </CardContent>
       </Card>
+
+      {/* MCP Configuration Dialog */}
+      {selectedAgent && (
+        <MCPConfigDialog
+          open={mcpDialogOpen}
+          onOpenChange={setMcpDialogOpen}
+          agentName={selectedAgent.name}
+          agentProvider={selectedAgent.provider}
+        />
+      )}
     </div>
   )
 }
