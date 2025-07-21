@@ -19,17 +19,20 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let initializationPromise: Promise<void> | null = null
+    
     const unsubscribe = blink.auth.onAuthStateChanged(async (state) => {
       setUser(state.user)
       setLoading(state.isLoading)
       
-      // Initialize default data for new users
-      if (state.user && !state.isLoading) {
-        try {
-          await DatabaseService.initializeDefaultData(state.user.id)
-        } catch (error) {
-          console.error('Failed to initialize default data:', error)
-        }
+      // Initialize default data for new users (only once)
+      if (state.user && !state.isLoading && !initializationPromise) {
+        initializationPromise = DatabaseService.initializeDefaultData(state.user.id)
+          .catch(error => {
+            console.error('Failed to initialize default data:', error)
+            // Reset promise so it can be retried later
+            initializationPromise = null
+          })
       }
     })
     
